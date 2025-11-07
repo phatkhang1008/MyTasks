@@ -14,15 +14,24 @@ DATE_FMT = "%d-%m-%Y %H:%M"
 class SimpleTimePicker(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
+
         self.hour = tk.StringVar(value="00")
         self.minute = tk.StringVar(value="00")
-        ttk.Spinbox(
-            self, from_=0, to=23, textvariable=self.hour, width=3, justify="center"
-        ).grid(row=0, column=0)
-        ttk.Label(self, text=":").grid(row=0, column=1)
-        ttk.Spinbox(
-            self, from_=0, to=59, textvariable=self.minute, width=3, justify="center"
-        ).grid(row=0, column=2)
+
+        # Giảm width, canh giữa, thêm padding nhẹ cho đẹp
+        spin_style = {"justify": "center", "width": 2, "wrap": True}
+
+        ttk.Spinbox(self, from_=0, to=23, textvariable=self.hour, **spin_style).grid(
+            row=0, column=0, padx=(0, 2)
+        )
+
+        ttk.Label(self, text=":", font=("Segoe UI", 10, "bold")).grid(
+            row=0, column=1, padx=(0, 2)
+        )
+
+        ttk.Spinbox(self, from_=0, to=59, textvariable=self.minute, **spin_style).grid(
+            row=0, column=2
+        )
 
     def get(self):
         return f"{self.hour.get().zfill(2)}:{self.minute.get().zfill(2)}"
@@ -75,34 +84,37 @@ class TodoApp:
         )
         frm.pack(fill="x", padx=12, pady=8)
 
-        ttk.Label(frm, text="Tiêu đề:").grid(row=0, column=0, sticky="w")
+        # Tiêu đề
+        ttk.Label(frm, text="Tiêu đề:").grid(row=0, column=0, sticky="w", pady=4)
         self.ent_title = ttk.Entry(frm, width=48)
-        self.ent_title.grid(row=0, column=1, columnspan=3, sticky="we", padx=6, pady=2)
+        self.ent_title.grid(row=0, column=1, columnspan=3, sticky="we", padx=6, pady=4)
 
-        ttk.Label(frm, text="Ngày hết hạn:").grid(row=1, column=0, sticky="w")
+        # Ngày hết hạn
+        ttk.Label(frm, text="Ngày hết hạn:").grid(row=1, column=0, sticky="w", pady=4)
         self.date_deadline = DateEntry(frm, width=12, dateformat="%d-%m-%Y")
-        self.date_deadline.grid(row=1, column=1, sticky="w", padx=6)
+        self.date_deadline.grid(row=1, column=1, sticky="w", padx=6, pady=4)
 
-        ttk.Label(frm, text="Giờ:").grid(row=1, column=2, sticky="e")
+        # Giờ
+        ttk.Label(frm, text="Giờ:").grid(row=1, column=2, sticky="e", pady=4)
         self.time_deadline = SimpleTimePicker(frm)
-        self.time_deadline.grid(row=1, column=3, sticky="w")
+        self.time_deadline.grid(row=1, column=3, sticky="w", pady=4)
 
-        # ===== Ưu tiên =====
-        ttk.Label(frm, text="Ưu tiên:").grid(row=2, column=0, sticky="w")
-        self.cmb_priority = ttk.Combobox(
-            frm, values=["Cao", "Trung bình", "Thấp"], width=12, state="readonly"
+        # Ưu tiên (custom popup)
+        ttk.Label(frm, text="Ưu tiên:").grid(row=2, column=0, sticky="w", pady=4)
+        self.priority_var = tk.StringVar(value="Trung bình")
+        self.btn_priority = ttk.Button(
+            frm,
+            text="Trung bình ",
+            bootstyle="warning",
+            width=12,
+            command=self.show_priority_popup,
         )
-        self.cmb_priority.set("Trung bình")
-        self.cmb_priority.grid(row=2, column=1, sticky="w", padx=6)
+        self.btn_priority.grid(row=2, column=1, sticky="w", padx=6, pady=4)
 
-        # 👇 Bind combobox để không mất focus khi chọn
-        self.cmb_priority.bind("<ButtonPress-1>", self.start_edit_priority)
-        self.cmb_priority.bind("<<ComboboxSelected>>", self.end_edit_priority)
-
-        # ===== Chi tiết =====
-        ttk.Label(frm, text="Chi tiết:").grid(row=3, column=0, sticky="nw")
+        # Chi tiết
+        ttk.Label(frm, text="Chi tiết:").grid(row=3, column=0, sticky="nw", pady=4)
         self.txt_detail = tk.Text(frm, height=8, width=48)
-        self.txt_detail.grid(row=3, column=1, columnspan=3, sticky="we", padx=8, pady=6)
+        self.txt_detail.grid(row=3, column=1, columnspan=3, sticky="we", padx=6, pady=4)
 
         # ===== Buttons =====
         btns = ttk.Frame(root, padding=(10, 0))
@@ -125,9 +137,9 @@ class TodoApp:
 
         # ===== Danh sách =====
         listfrm = ttk.Labelframe(root, text=" Danh sách công việc ", padding=8)
-        listfrm.pack(fill="both", expand=True, padx=12, pady=8)
+        listfrm.pack(fill="both", expand=True, padx=8, pady=4)
         self.listbox = tk.Listbox(
-            listfrm, height=10, activestyle="dotbox", font=("Segoe UI", 10)
+            listfrm, height=8, activestyle="dotbox", font=("Segoe UI", 10)
         )
         self.listbox.pack(side="left", fill="both", expand=True)
         self.listbox.bind("<<ListboxSelect>>", self.on_select)
@@ -159,7 +171,7 @@ class TodoApp:
         date_str = self.date_deadline.entry.get().strip()
         time_str = self.time_deadline.get()
         deadline = f"{date_str} {time_str}"
-        priority = self.cmb_priority.get().strip()
+        priority = self.priority_var.get().strip()
         detail = self.txt_detail.get("1.0", "end").strip()
 
         if not title:
@@ -195,7 +207,7 @@ class TodoApp:
         date_str = self.date_deadline.entry.get().strip()
         time_str = self.time_deadline.get()
         deadline = f"{date_str} {time_str}"
-        priority = self.cmb_priority.get().strip()
+        priority = self.priority_var.get().strip()
         detail = self.txt_detail.get("1.0", "end").strip()
 
         try:
@@ -234,6 +246,39 @@ class TodoApp:
         save_tasks(self.tasks)
         self.refresh()
 
+    # ===== Popup chọn ưu tiên =====
+    def show_priority_popup(self):
+        popup = tk.Toplevel(self.root)
+        popup.overrideredirect(True)
+        popup.geometry(
+            "+%d+%d"
+            % (self.btn_priority.winfo_rootx(), self.btn_priority.winfo_rooty() + 30)
+        )
+        popup.config(bg="#f0f0f0", padx=4, pady=4)
+
+        options = [
+            ("Cao", "danger"),
+            ("Trung bình", "warning"),
+            ("Thấp", "success"),
+        ]
+
+        def select_priority(value, style):
+            self.priority_var.set(value)  # Cập nhật biến ngay lập tức
+            self.btn_priority.config(text=value, bootstyle=style)
+            popup.destroy()
+
+        for text, style in options:
+            ttk.Button(
+                popup,
+                text=text,
+                bootstyle=style,
+                width=14,
+                command=lambda t=text, s=style: select_priority(t, s),
+            ).pack(fill="x", pady=2)
+
+        popup.focus_force()
+        popup.bind("<FocusOut>", lambda e: popup.destroy())
+
     # ===== Helpers =====
     def current_index(self):
         sel = self.listbox.curselection()
@@ -255,19 +300,13 @@ class TodoApp:
         self.lbl_info.config(text=f"Tổng: {len(self.tasks)} | Hoàn thành: {done_count}")
 
     def on_select(self, _evt):
-        if self.editing_priority: # tránh mất focus khi chọn combobox
-            return
-        w = self.root.focus_get()
-        if w is not None and ("Combobox" in str(w) or "TCombobox" in str(w)):
-            return
-         # 👉 lấy vị trí task đang chọn
+        # 👉 lấy vị trí task đang chọn
         idx = self.current_index()
         if idx is None or idx >= len(self.tasks):
-            return       
+            return
         t = self.tasks[idx]
         self.ent_title.delete(0, tk.END)
         self.ent_title.insert(0, t.title)
-        self.cmb_priority.set(t.priority)
         self.txt_detail.delete("1.0", tk.END)
         self.txt_detail.insert("1.0", t.detail)
         if t.deadline:
@@ -278,25 +317,25 @@ class TodoApp:
                 self.time_deadline.set(dt.strftime("%H:%M"))
             except:
                 pass
-
+        # Cập nhật label chi tiết
         info = (
             f"📝 Tiêu đề: {t.title}\n"
             f"📄 Chi tiết: {t.detail}\n"
             f"🎯 Ưu tiên: {t.priority}\n"
             f"⏰ Deadline: {t.deadline or '(chưa đặt)'}\n"
             f"📅 Tạo lúc: {t.created_at}\n"
-            f"📌 Trạng thái: {'✅ Hoàn thành' if t.done else '❌ Chưa xong'}"
+            f"📌 Trạng thái: {'Hoàn thành' if t.done else 'Chưa xong'}"
         )
         self.lbl_info.config(text=info)
-
-    # ===== Chống mất focus khi chọn combobox =====
-    def start_edit_priority(self, _evt):
-        # Bật cờ NGAY LẬP TỨC để hàm on_select thấy ngay
-        self.editing_priority = True
-
-    def end_edit_priority(self, _evt):
-        # reset lại sau khi chọn xong
-        self.root.after(250, lambda: setattr(self, "editing_priority", False))
+        # Cập nhật nút ưu tiên cho đúng màu
+        style_map = {
+            "Cao": "danger",
+            "Trung bình": "warning",
+            "Thấp": "success",
+        }
+        style = style_map.get(t.priority, "secondary")
+        self.priority_var.set(t.priority)
+        self.btn_priority.config(text=f" {t.priority}", bootstyle=style)
 
 
 def run_app():
