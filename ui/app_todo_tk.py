@@ -120,24 +120,24 @@ class TodoApp:
         btns = ttk.Frame(root, padding=(10, 0))
         btns.pack(fill="x", pady=(2, 8))
         ttk.Button(
-            btns, text="➕ Thêm", command=self.add_task, bootstyle="success-outline"
+            btns, text="Thêm", command=self.add_task, bootstyle="success-outline"
         ).pack(side="left", padx=4)
         ttk.Button(
-            btns, text="💾 Cập nhật", command=self.update_task, bootstyle="info-outline"
+            btns, text="Cập nhật", command=self.update_task, bootstyle="info-outline"
         ).pack(side="left", padx=4)
         ttk.Button(
-            btns, text="✅ Hoàn thành", command=self.mark_done, bootstyle="success"
+            btns, text="Hoàn thành", command=self.mark_done, bootstyle="success"
         ).pack(side="left", padx=4)
+        ttk.Button(btns, text="Xóa", command=self.delete_task, bootstyle="danger").pack(
+            side="left", padx=4
+        )
         ttk.Button(
-            btns, text="🗑️ Xóa", command=self.delete_task, bootstyle="danger"
-        ).pack(side="left", padx=4)
-        ttk.Button(
-            btns, text="🔄 Làm mới", command=self.refresh, bootstyle="warning-outline"
+            btns, text="Làm mới", command=self.refresh, bootstyle="warning-outline"
         ).pack(side="left", padx=4)
 
         # ===== Danh sách =====
         listfrm = ttk.Labelframe(root, text=" Danh sách công việc ", padding=8)
-        listfrm.pack(fill="both", expand=True, padx=8, pady=4)
+        listfrm.pack(fill="both", expand=True, padx=5, pady=5)
         self.listbox = tk.Listbox(
             listfrm, height=8, activestyle="dotbox", font=("Segoe UI", 10)
         )
@@ -148,6 +148,7 @@ class TodoApp:
         sb.pack(side="right", fill="y")
         self.listbox.config(yscrollcommand=sb.set)
 
+        # Khung chi tiết công việc
         info = ttk.Labelframe(
             root,
             text=" Chi tiết ",
@@ -155,14 +156,20 @@ class TodoApp:
             bootstyle="secondary",
         )
         info.pack(fill="x", padx=14, pady=(10, 14))
+
         self.lbl_info = ttk.Label(
             info,
             text="Chọn 1 công việc để xem chi tiết…",
             justify="left",
             anchor="w",
-            wraplength=820,
         )
-        self.lbl_info.pack(fill="x", padx=4, pady=4)
+        self.lbl_info.pack(fill="x", expand=True, padx=4, pady=4)
+
+        def _auto_wrap(event):
+            self.lbl_info.configure(wraplength=event.width - 20)
+
+        info.bind("<Configure>", _auto_wrap)
+
         self.refresh()
 
     # ===== CRUD =====
@@ -305,7 +312,7 @@ class TodoApp:
         self.lbl_info.config(text=f"Tổng: {len(self.tasks)} | Hoàn thành: {done_count}")
 
     def on_select(self, _evt):
-        # 👉 lấy vị trí task đang chọn
+        #  lấy vị trí task đang chọn
         idx = self.current_index()
         if idx is None or idx >= len(self.tasks):
             return
@@ -324,12 +331,12 @@ class TodoApp:
                 pass
         # Cập nhật label chi tiết
         info = (
-            f"📝 Tiêu đề: {t.title}\n"
-            f"📄 Chi tiết: {t.detail}\n"
-            f"🎯 Ưu tiên: {t.priority}\n"
-            f"⏰ Deadline: {t.deadline or '(chưa đặt)'}\n"
-            f"📅 Tạo lúc: {t.created_at}\n"
-            f"📌 Trạng thái: {'Hoàn thành' if t.done else 'Chưa xong'}"
+            f"Tiêu đề: {t.title}\n"
+            f"Chi tiết: {t.detail}\n"
+            f"Ưu tiên: {t.priority}\n"
+            f"Deadline: {t.deadline or '(chưa đặt)'}\n"
+            f"Tạo lúc: {t.created_at}\n"
+            f"Trạng thái: {'Hoàn thành' if t.done else 'Chưa xong'}"
         )
         self.lbl_info.config(text=info)
         # Cập nhật nút ưu tiên cho đúng màu
@@ -358,7 +365,7 @@ def run_app():
     splash.pack(expand=True)
 
     root.update()
-    root.after(2000)  # 👈 Giữ splash 2 giây
+    root.after(2000)  # Giữ splash 2 giây
     root.update()  # ép vẽ lại (để thấy hiệu ứng)
 
     splash.destroy()  # Sau đó mới phá splash
@@ -366,7 +373,7 @@ def run_app():
 
     # App chính
     app = TodoApp(root)
-    w, h = 900, 800
+    w, h = 800, 900
     x = (root.winfo_screenwidth() - w) // 2
     y = (root.winfo_screenheight() - h) // 2
     root.geometry(f"{w}x{h}+{x}+{y}")
