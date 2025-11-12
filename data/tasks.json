@@ -1,19 +1,19 @@
 [
   {
-    "title": "Test task 12h đêm",
-    "detail": "Đề tài : thiết kế Appdsdsadas",
-    "deadline": "29-11-2025 07:30",
-    "priority": "Cao",
-    "done": true,
-    "created_at": "06-11-2025 23:52"
-  },
-  {
     "title": "Báo cáo đồ án Python",
     "detail": "Đề tài : thiết kế App",
     "deadline": "29-11-2025 07:30",
     "priority": "Cao",
     "done": true,
     "created_at": "06-11-2025 21:51"
+  },
+  {
+    "title": "Test task 12h đêm",
+    "detail": "Đề tài : thiết kế Appdsdsadas",
+    "deadline": "29-11-2025 07:30",
+    "priority": "Cao",
+    "done": true,
+    "created_at": "06-11-2025 23:52"
   },
   {
     "title": "Test task 12h đêm",
@@ -27,7 +27,7 @@
     "title": "Báo cáo đồ án Pythonádas",
     "detail": "Đề tài : thiết kế Appdsdsadas",
     "deadline": "29-11-2025 07:30",
-    "priority": "Thấp",
+    "priority": "Trung bình",
     "done": true,
     "created_at": "06-11-2025 22:48"
   }

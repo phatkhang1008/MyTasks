@@ -275,9 +275,14 @@ class TodoApp:
                 width=14,
                 command=lambda t=text, s=style: select_priority(t, s),
             ).pack(fill="x", pady=2)
-
-        popup.focus_force()
-        popup.bind("<FocusOut>", lambda e: popup.destroy())
+        try:
+            popup.focus_set()
+            popup.grab_set()  # giữ chuột và bàn phím trong cửa sổ này cho đến khi nó đóng
+        except:
+            pass
+        popup.after(
+            100, lambda: popup.wait_window()
+        )  # Dừng ở đây tới khi popup bị destroy
 
     # ===== Helpers =====
     def current_index(self):
