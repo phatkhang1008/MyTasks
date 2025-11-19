@@ -44,20 +44,12 @@ class TodoApp:
     def __init__(self, root):
         self.root = root
         self.root.title("MyTasks - Quản lý công việc cá nhân")
-        self.mouse_down = False
         self.updating = False
         self.editing_priority = False
 
         # dùng service
         self.service = TaskService()
         self.tasks = self.service.tasks
-
-        self.root.bind_all(
-            "<ButtonPress-1>", lambda e: setattr(self, "mouse_down", True)
-        )
-        self.root.bind_all(
-            "<ButtonRelease-1>", lambda e: setattr(self, "mouse_down", False)
-        )
 
         style = ttk.Style()
         style.configure("TButton", font=("Segoe UI", 10, "bold"), padding=6)
@@ -219,6 +211,7 @@ class TodoApp:
     def update_task(self):
         idx = self.current_index()
         if idx is None:
+            messagebox.showwarning("Vui lòng chọn một công việc trong danh sách!")
             return
 
         title = self.ent_title.get().strip()
@@ -422,7 +415,7 @@ class TodoApp:
 
 
 def run_app():
-    # Các theme: cosmo, united, yeti, solar, simplex, pulse, minty
+    # Các theme: cosmo, united, yeti, solar, simplex, pulse, minty, flatly
     root = ttk.Window(themename="united", size=(600, 400))
     # căn giữa khi khởi động
     sw = root.winfo_screenwidth()
