@@ -94,9 +94,18 @@ class TodoApp:
         self.btn_priority.grid(row=2, column=1, sticky="w", padx=6, pady=4)
 
         ttk.Label(frm, text="Chi tiết:").grid(row=3, column=0, sticky="nw", pady=4)
-        self.txt_detail = tk.Text(frm, height=10, width=48)
-        self.txt_detail.grid(row=3, column=1, columnspan=3, sticky="we", padx=6, pady=4)
 
+        self.txt_detail = tk.Text(frm, height=4, width=100)
+        self.txt_detail.grid(
+            row=3, column=1, columnspan=3, sticky="nswe", padx=6, pady=4
+        )
+        # giãn khung theo kích thước app
+        frm.columnconfigure(1, weight=1)
+        frm.columnconfigure(2, weight=1)
+        frm.columnconfigure(3, weight=1)
+        frm.rowconfigure(3, weight=1)
+
+        # button
         btns = ttk.Frame(root, padding=(10, 0))
         btns.pack(fill="x", pady=(2, 8))
         ttk.Button(
@@ -115,6 +124,7 @@ class TodoApp:
             btns, text="Làm mới", command=self.refresh, bootstyle="warning-outline"
         ).pack(side="left", padx=4)
 
+        # Ds cv
         listfrm = ttk.Labelframe(root, text=" Danh sách công việc ", padding=8)
         listfrm.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -211,7 +221,9 @@ class TodoApp:
     def update_task(self):
         idx = self.current_index()
         if idx is None:
-            messagebox.showwarning("Vui lòng chọn một công việc trong danh sách!")
+            messagebox.showwarning(
+                "Thiếu lựa chọn", "Vui lòng chọn một công việc trong danh sách!"
+            )
             return
 
         title = self.ent_title.get().strip()
@@ -450,7 +462,7 @@ def start_main_app(root, splash):
     app = TodoApp(root)
 
     # Căn giữa cửa sổ
-    w, h = 800, 900
+    w, h = 760, 800
     x = (root.winfo_screenwidth() - w) // 2
     y = (root.winfo_screenheight() - h) // 2
     root.geometry(f"{w}x{h}+{x}+{y}")
