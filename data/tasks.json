@@ -1,8 +1,22 @@
 [
   {
+<<<<<<< Updated upstream
     "title": "Test Task Ưu Tiên",
     "detail": "",
     "deadline": "27-11-2025 12:10",
+=======
+    "title": "123",
+    "detail": "",
+    "deadline": "10-11-2025 00:00",
+    "priority": "Thấp",
+    "done": false,
+    "created_at": "13-11-2025 18:39"
+  },
+  {
+    "title": "Test task",
+    "detail": "Nộp bt 123",
+    "deadline": "14-11-2025 16:33",
+>>>>>>> Stashed changes
     "priority": "Trung bình",
     "done": false,
     "created_at": "26-11-2025 14:05"
